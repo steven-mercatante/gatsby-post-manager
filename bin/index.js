@@ -5,6 +5,7 @@ const path = require("path");
 const chalk = require("chalk");
 const boxed = require("boxen");
 const yargs = require("yargs");
+const frontmatter = require("front-matter");
 
 const options = yargs.usage("Usage: -n <name>").argv;
 
@@ -12,23 +13,17 @@ console.log(chalk.green.bold("hi"));
 
 const postsDir = "/Users/steve/sites/stevemerc.com/content/posts";
 
-// Find all index.md files in postsDir, at least one level deep (first level is the article name)
+function getAllPostsData() {
+  return fs
+    .readdirSync(postsDir)
+    .map(postDir => path.join(postsDir, postDir))
+    .reduce((acc, postDir) => {
+      const post = path.join(postDir, "index.md");
+      const postContents = fs.readFileSync(post, "utf8");
+      const fm = frontmatter(postContents);
+      acc.push(fm.attributes);
+      return acc;
+    }, []);
+}
 
-// fs.readdirSync(postsDir, (err, items) => {
-//   console.log(items);
-//   items.forEach(item => {
-//     const fullPath = path.join(postsDir, item);
-//     console.log(fullPath);
-//   });
-// });
-
-const dirs = fs
-  .readdirSync(postsDir)
-  .map(postDir => path.join(postsDir, postDir))
-  .forEach(postDir => {
-    // console.log(postDir);
-    const post = path.join(postDir, "index.md");
-    // console.log(post);
-    const postContents = fs.readFileSync(post, "utf8");
-    console.log(postContents);
-  });
+console.log(getAllPostsData());
