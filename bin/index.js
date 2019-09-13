@@ -13,6 +13,27 @@ console.log(chalk.green.bold("hi"));
 
 const postsDir = "/Users/steve/sites/stevemerc.com/content/posts";
 
+/**
+ * Returns the current date in YYYY-MM-DD format
+ */
+function getCurrentDate() {
+  const d = new Date();
+
+  let month = (d.getMonth() + 1).toString();
+  if (month.length < 2) {
+    month = `0${month}`;
+  }
+
+  let day = d.getDate().toString();
+  if (day.length < 2) {
+    day = `0${day}`;
+  }
+
+  return `${d.getFullYear()}-${month}-${day}`;
+}
+
+// TODO: order posts by date
+
 function getAllPostsData() {
   return fs
     .readdirSync(postsDir)
@@ -26,4 +47,31 @@ function getAllPostsData() {
     }, []);
 }
 
-console.log(getAllPostsData());
+function getPublishedPosts() {
+  return getAllPostsData().filter(post => {
+    return (
+      post.published === true &&
+      new Date(post.date) <= new Date(getCurrentDate())
+    );
+  });
+}
+
+function getPendingPosts() {
+  return getAllPostsData().filter(post => {
+    return (
+      post.published === true &&
+      new Date(post.date) > new Date(getCurrentDate())
+    );
+  });
+}
+
+function getUnpublishedPosts() {
+  return getAllPostsData().filter(post => {
+    return post.published !== true;
+  });
+}
+
+// console.log(getAllPostsData());
+// console.log(getPublishedPosts());
+console.log(getPendingPosts());
+// console.log(getUnpublishedPosts());
