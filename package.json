@@ -2,11 +2,19 @@
   "name": "gatsby-post-manager",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "bin/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "gpm": "./bin/index.js"
+  },
   "keywords": [],
   "author": "Steven Mercatante",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "boxen": "^4.1.0",
+    "chalk": "^2.4.2",
+    "yargs": "^14.0.0"
+  }
 }
