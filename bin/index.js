@@ -44,7 +44,16 @@ function getAllPostsData() {
       const fm = frontmatter(postContents);
       acc.push(fm.attributes);
       return acc;
-    }, []);
+    }, [])
+    .sort((a, b) => {
+      if (new Date(a.date) > new Date(b.date)) {
+        return -1;
+      }
+      if (new Date(a.date) < new Date(b.date)) {
+        return 1;
+      }
+      return 0;
+    });
 }
 
 function getPublishedPosts() {
@@ -57,21 +66,23 @@ function getPublishedPosts() {
 }
 
 function getPendingPosts() {
-  return getAllPostsData().filter(post => {
-    return (
-      post.published === true &&
-      new Date(post.date) > new Date(getCurrentDate())
-    );
-  });
+  return getAllPostsData()
+    .filter(post => {
+      return (
+        post.published === true &&
+        new Date(post.date) > new Date(getCurrentDate())
+      );
+    })
+    .reverse();
 }
 
 function getUnpublishedPosts() {
-  return getAllPostsData().filter(post => {
-    return post.published !== true;
-  });
+  return getAllPostsData()
+    .filter(post => post.published !== true)
+    .reverse();
 }
 
 // console.log(getAllPostsData());
 // console.log(getPublishedPosts());
-console.log(getPendingPosts());
+// console.log(getPendingPosts());
 // console.log(getUnpublishedPosts());
