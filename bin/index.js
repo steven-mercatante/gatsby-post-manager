@@ -3,18 +3,17 @@
 const fs = require("fs");
 const path = require("path");
 const chalk = require("chalk");
-const yargs = require("yargs");
+const program = require("commander");
 const frontmatter = require("front-matter");
 const Table = require("cli-table");
 
-//! DON'T HARDCODE
-const postsDir = "/Users/steve/sites/stevemerc.com/content/posts";
 const colors = {
   blue: "#82AAFF",
   green: "#C3E88D",
   orange: "#E57A40",
   red: "#FF5370"
 };
+
 const postTypeColors = {
   published: colors.green,
   pending: colors.blue,
@@ -43,14 +42,11 @@ function getCurrentDate() {
 function getPostStatus(post) {
   if (post.published === true && new Date(post.date) <= getCurrentDate()) {
     return "published";
-    // return chalk.hex(colors.green)("published");
   }
   if (post.published === true && new Date(post.date) > getCurrentDate()) {
     return "pending";
-    // return chalk.hex(colors.blue)("pending");
   }
   return "unpublished";
-  // return chalk.hex(colors.orange)("unpublished");
 }
 
 // TODO: this should recursively iterate over parent dir and collect all index.md[x] files
@@ -96,7 +92,7 @@ function getUnpublishedPosts() {
     .reverse();
 }
 
-function render(header, posts, postType, opts = {}) {
+function render(header, posts, opts = {}) {
   const { showStatus } = opts;
   console.log(chalk.hex(colors.green).bold(header));
   const tableHeader = ["#", "Date", "Title"];
@@ -123,42 +119,59 @@ function render(header, posts, postType, opts = {}) {
   }
 }
 
-yargs.command(
-  "list [type]",
-  "list posts",
-  yargs => {
-    yargs.positional("type", {
-      describe: "one of: all, published, pending, unpublished",
-      default: "all"
-    });
-  },
-  argv => {
-    switch (argv.type) {
-      case "all": {
-        render("All Posts", getAllPostsData(), "all", { showStatus: true });
-        break;
-      }
+program
+  .option("-d, --dir <path>", "directory where posts live", ".")
+  .option(
+    "-p, --posts [status]",
+    'list posts with optional status (one of: "all", "published", "pending", "unpublished")',
+    "all"
+  )
+  .parse(process.argv);
 
-      case "published": {
-        render("Published Posts", getPublishedPosts(), "published");
-        break;
-      }
+const { dir } = program.opts();
+let postsDir;
+if (path.isAbsolute(dir)) {
+  postsDir = dir;
+} else {
+  postsDir = path.join(process.cwd(), program.opts().dir);
+}
 
-      case "pending": {
-        render("Pending Posts", getPendingPosts(), "pending");
-        break;
-      }
+try {
+  const postsDirStats = fs.statSync(postsDir);
+  if (!postsDirStats.isDirectory(postsDir)) {
+    throw "not a dir";
+  }
+} catch (err) {
+  return console.log(
+    chalk.hex(colors.red)(`Error: invalid directory ${postsDir}`)
+  );
+}
 
-      case "unpublished": {
-        render("Unpublished Posts", getUnpublishedPosts(), "unpublished");
-        break;
-      }
+if (program.posts) {
+  switch (program.posts) {
+    case "all": {
+      render("All Posts", getAllPostsData(), { showStatus: true });
+      break;
+    }
+    case "published": {
+      render("Published Posts", getPublishedPosts());
+      break;
+    }
 
-      default: {
-        console.log(
-          chalk.hex(colors.red)(`Error: unknown type '${argv.type}'`)
-        );
-      }
+    case "pending": {
+      render("Pending Posts", getPendingPosts());
+      break;
+    }
+
+    case "unpublished": {
+      render("Unpublished Posts", getUnpublishedPosts());
+      break;
+    }
+
+    default: {
+      console.log(
+        chalk.hex(colors.red)(`Invalid value for status: '${program.posts}'`)
+      );
     }
   }
-).argv;
+}
