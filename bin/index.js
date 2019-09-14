@@ -3,8 +3,8 @@
 const fs = require("fs");
 const path = require("path");
 const chalk = require("chalk");
-const program = require("commander");
 const frontmatter = require("front-matter");
+const yargs = require("yargs");
 const Table = require("cli-table");
 
 const colors = {
@@ -50,7 +50,7 @@ function getPostStatus(post) {
 }
 
 // TODO: this should recursively iterate over parent dir and collect all index.md[x] files
-function getAllPostsData() {
+function getAllPostsData(postsDir) {
   return fs
     .readdirSync(postsDir)
     .map(postDir => path.join(postsDir, postDir))
@@ -72,29 +72,27 @@ function getAllPostsData() {
     });
 }
 
-function getPublishedPosts() {
-  return getAllPostsData().filter(post => {
+function getPublishedPosts(postsDir) {
+  return getAllPostsData(postsDir).filter(post => {
     return post.published === true && new Date(post.date) <= getCurrentDate();
   });
 }
 
-function getPendingPosts() {
-  return getAllPostsData()
+function getPendingPosts(postsDir) {
+  return getAllPostsData(postsDir)
     .filter(post => {
       return post.published === true && new Date(post.date) > getCurrentDate();
     })
     .reverse();
 }
 
-function getUnpublishedPosts() {
-  return getAllPostsData()
+function getUnpublishedPosts(postsDir) {
+  return getAllPostsData(postsDir)
     .filter(post => post.published !== true)
     .reverse();
 }
 
-function render(header, posts, opts = {}) {
-  console.log(chalk.hex(colors.green).bold(header));
-
+function render(posts, opts = {}) {
   const tableHeader = ["#", "Date", "Title"];
   const { showStatus } = opts;
   if (showStatus) {
@@ -108,7 +106,9 @@ function render(header, posts, opts = {}) {
     posts.forEach((post, idx) => {
       const postStatus = getPostStatus(post);
       const postTypeColor = postTypeColors[postStatus];
-      const row = [idx + 1, chalk.hex(postTypeColor)(post.date), post.title];
+      const postDate = post.date ? post.date : "N/A";
+      const postTitle = post.title ? post.title : "N/A";
+      const row = [idx + 1, chalk.hex(postTypeColor)(postDate), postTitle];
       if (showStatus) {
         row.push(chalk.hex(postTypeColor)(postStatus));
       }
@@ -152,66 +152,74 @@ function getStats(posts) {
   console.log(table.toString());
 }
 
-program
-  .option("-d, --dir <path>", "directory where posts live", ".")
-  .option(
-    "-p, --posts [status]",
-    'list posts with optional status (one of: "all", "published", "pending", "unpublished")'
-  )
-  .option("-ps, --post-stats", "display stats for all posts")
-  .parse(process.argv);
-
-const { dir } = program.opts();
-let postsDir;
-if (path.isAbsolute(dir)) {
-  postsDir = dir;
-} else {
-  postsDir = path.join(process.cwd(), program.opts().dir);
-}
-
-try {
-  const postsDirStats = fs.statSync(postsDir);
-  if (!postsDirStats.isDirectory(postsDir)) {
-    throw "not a dir";
+function getPostsDir(dir = ".") {
+  let postsDir;
+  if (path.isAbsolute(dir)) {
+    postsDir = dir;
+  } else {
+    postsDir = path.join(process.cwd(), dir);
   }
-} catch (err) {
-  return console.log(
-    chalk.hex(colors.red)(`Error: invalid directory ${postsDir}`)
-  );
-}
 
-if (program.posts) {
-  switch (program.posts) {
-    case true:
-    case "all": {
-      render("All Posts", getAllPostsData(), { showStatus: true });
-      break;
+  try {
+    const postsDirStats = fs.statSync(postsDir);
+    if (!postsDirStats.isDirectory()) {
+      throw "not a dir";
     }
-    case "published": {
-      render("Published Posts", getPublishedPosts());
-      break;
-    }
-
-    case "pending": {
-      render("Pending Posts", getPendingPosts());
-      break;
-    }
-
-    case "unpublished": {
-      render("Unpublished Posts", getUnpublishedPosts());
-      break;
-    }
-
-    default: {
-      console.log(
-        chalk.hex(colors.red)(`Invalid value for status: '${program.posts}'`)
-      );
-    }
+  } catch (err) {
+    console.log(chalk.hex(colors.red)(`Error: invalid directory ${postsDir}`));
+    process.exit();
   }
+
+  return postsDir;
 }
 
-if (program.postStats) {
-  getStats(getAllPostsData());
-}
+yargs
+  .option("dir", { alias: "d", description: "directory where posts live" })
+  .command({
+    command: "posts [status]",
+    aliases: ["p"],
+    desc:
+      'list posts with optional status (one of: "all", "published", "pending", "unpublished")',
+    builder: yargs => yargs.default("status", "all"),
+    handler: argv => {
+      const postsDir = getPostsDir(argv.dir);
+      switch (argv.status) {
+        case "all": {
+          render(getAllPostsData(postsDir), { showStatus: true });
+          break;
+        }
+        case "published": {
+          render(getPublishedPosts(postsDir));
+          break;
+        }
 
-console.log(program.opts());
+        case "pending": {
+          render(getPendingPosts(postsDir));
+          break;
+        }
+
+        case "unpublished": {
+          render(getUnpublishedPosts(postsDir));
+          break;
+        }
+
+        default: {
+          console.log(
+            chalk.hex(colors.red)(`Invalid value for status: '${argv.status}'`)
+          );
+          process.exit();
+        }
+      }
+    }
+  })
+  .command({
+    command: "post-stats",
+    aliases: ["ps"],
+    desc: "display stats for all posts",
+    handler: argv => {
+      const postsDir = getPostsDir(argv.dir);
+      getStats(getAllPostsData(postsDir));
+    }
+  })
+  .demandCommand()
+  .help().argv;
