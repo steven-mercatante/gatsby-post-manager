@@ -124,7 +124,7 @@ program
   .parse(process.argv);
 
 // TODO: handle case where postsDir isn't a dir
-const postsDir = program.opts().dir;
+const postsDir = path.join(process.cwd(), program.opts().dir);
 
 if (program.posts) {
   switch (program.posts) {
