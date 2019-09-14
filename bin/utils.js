@@ -3,6 +3,7 @@ const path = require("path");
 const chalk = require("chalk");
 const frontmatter = require("front-matter");
 const Table = require("cli-table");
+const glob = require("glob");
 
 const colors = {
   blue: "#82AAFF",
@@ -46,15 +47,12 @@ function getPostStatus(post) {
   return "unpublished";
 }
 
-// TODO: this should recursively iterate over parent dir and collect all index.md[x] files
 function getAllPostsData(postsDir) {
-  return fs
-    .readdirSync(postsDir)
-    .map(postDir => path.join(postsDir, postDir))
-    .reduce((acc, postDir) => {
+  return glob
+    .sync(`${postsDir}/**/index.{md,mdx}`)
+    .reduce((acc, file) => {
       try {
-        const post = path.join(postDir, "index.md"); // TODO: should also support .mdx
-        const postContents = fs.readFileSync(post, "utf8");
+        const postContents = fs.readFileSync(file, "utf8");
         const fm = frontmatter(postContents);
         acc.push(fm.attributes);
       } catch (err) {}
