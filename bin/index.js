@@ -7,8 +7,6 @@ const program = require("commander");
 const frontmatter = require("front-matter");
 const Table = require("cli-table");
 
-//! DON'T HARDCODE
-const postsDir = "/Users/steve/sites/stevemerc.com/content/posts";
 const colors = {
   blue: "#82AAFF",
   green: "#C3E88D",
@@ -120,11 +118,16 @@ function render(header, posts, opts = {}) {
   }
 }
 
-program.option("-p, --posts [status]", "list posts").parse(process.argv);
+program
+  .option("-d, --dir <path>", "directory where posts live", ".")
+  .option("-p, --posts  [status]", "list posts with optional status", "all")
+  .parse(process.argv);
+
+// TODO: handle case where postsDir isn't a dir
+const postsDir = program.opts().dir;
 
 if (program.posts) {
   switch (program.posts) {
-    case true:
     case "all": {
       render("All Posts", getAllPostsData(), { showStatus: true });
       break;
