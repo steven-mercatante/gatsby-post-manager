@@ -106,7 +106,9 @@ function render(posts, opts = {}) {
     posts.forEach((post, idx) => {
       const postStatus = getPostStatus(post);
       const postTypeColor = postTypeColors[postStatus];
-      const row = [idx + 1, chalk.hex(postTypeColor)(post.date), post.title];
+      const postDate = post.date ? post.date : "N/A";
+      const postTitle = post.title ? post.title : "N/A";
+      const row = [idx + 1, chalk.hex(postTypeColor)(postDate), postTitle];
       if (showStatus) {
         row.push(chalk.hex(postTypeColor)(postStatus));
       }
