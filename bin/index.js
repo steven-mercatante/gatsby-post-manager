@@ -121,7 +121,11 @@ function render(header, posts, opts = {}) {
 
 program
   .option("-d, --dir <path>", "directory where posts live", ".")
-  .option("-p, --posts  [status]", "list posts with optional status", "all")
+  .option(
+    "-p, --posts [status]",
+    'list posts with optional status (one of: "all", "published", "pending", "unpublished")',
+    "all"
+  )
   .parse(process.argv);
 
 const { dir } = program.opts();
