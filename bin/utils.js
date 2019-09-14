@@ -69,26 +69,6 @@ function getAllPostsData(postsDir) {
     });
 }
 
-function getPublishedPosts(postsDir) {
-  return getAllPostsData(postsDir).filter(post => {
-    return post.published === true && new Date(post.date) <= getCurrentDate();
-  });
-}
-
-function getPendingPosts(postsDir) {
-  return getAllPostsData(postsDir)
-    .filter(post => {
-      return post.published === true && new Date(post.date) > getCurrentDate();
-    })
-    .reverse();
-}
-
-function getUnpublishedPosts(postsDir) {
-  return getAllPostsData(postsDir)
-    .filter(post => post.published !== true)
-    .reverse();
-}
-
 function render(posts, opts = {}) {
   const tableHeader = ["#", "Date", "Title"];
   const { showStatus } = opts;
@@ -149,6 +129,11 @@ function getPostsDir(dir = ".") {
 
 module.exports = {
   getAllPostsData,
+  getCurrentDate,
   getPostsDir,
+  getPostStatus,
+  publishedStr,
+  pendingStr,
+  unpublishedStr,
   render
 };

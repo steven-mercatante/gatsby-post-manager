@@ -1,41 +1,64 @@
-const { getAllPostsData, getPostsDir, render } = require("../utils");
+const {
+  getAllPostsData,
+  getCurrentDate,
+  getPostsDir,
+  render
+} = require("../utils");
 
-exports.command = "posts [status]";
+function getPublishedPosts(postsDir) {
+  return getAllPostsData(postsDir).filter(post => {
+    return post.published === true && new Date(post.date) <= getCurrentDate();
+  });
+}
 
-exports.aliases = ["p"];
+function getPendingPosts(postsDir) {
+  return getAllPostsData(postsDir)
+    .filter(post => {
+      return post.published === true && new Date(post.date) > getCurrentDate();
+    })
+    .reverse();
+}
 
-exports.desc =
-  'list posts with optional status (one of: "all", "published", "pending", "unpublished")';
+function getUnpublishedPosts(postsDir) {
+  return getAllPostsData(postsDir)
+    .filter(post => post.published !== true)
+    .reverse();
+}
 
-exports.builder = yargs => yargs.default("status", "all");
+module.exports = {
+  command: "posts [status]",
+  aliases: ["p"],
+  desc:
+    'list posts with optional status (one of: "all", "published", "pending", "unpublished")',
+  builder: yargs => yargs.default("status", "all"),
+  handler: argv => {
+    const postsDir = getPostsDir(argv.dir);
+    switch (argv.status) {
+      case "all": {
+        render(getAllPostsData(postsDir), { showStatus: true });
+        break;
+      }
+      case "published": {
+        render(getPublishedPosts(postsDir));
+        break;
+      }
 
-exports.handler = argv => {
-  const postsDir = getPostsDir(argv.dir);
-  switch (argv.status) {
-    case "all": {
-      render(getAllPostsData(postsDir), { showStatus: true });
-      break;
-    }
-    case "published": {
-      render(getPublishedPosts(postsDir));
-      break;
-    }
+      case "pending": {
+        render(getPendingPosts(postsDir));
+        break;
+      }
 
-    case "pending": {
-      render(getPendingPosts(postsDir));
-      break;
-    }
+      case "unpublished": {
+        render(getUnpublishedPosts(postsDir));
+        break;
+      }
 
-    case "unpublished": {
-      render(getUnpublishedPosts(postsDir));
-      break;
-    }
-
-    default: {
-      console.log(
-        chalk.hex(colors.red)(`Invalid value for status: '${argv.status}'`)
-      );
-      process.exit();
+      default: {
+        console.log(
+          chalk.hex(colors.red)(`Invalid value for status: '${argv.status}'`)
+        );
+        process.exit();
+      }
     }
   }
 };
