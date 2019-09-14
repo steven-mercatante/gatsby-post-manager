@@ -8,8 +8,6 @@ const yargs = require("yargs");
 const frontmatter = require("front-matter");
 const Table = require("cli-table");
 
-const options = yargs.usage("Usage: -n <name>").argv;
-
 //! DON'T HARDCODE
 const postsDir = "/Users/steve/sites/stevemerc.com/content/posts";
 
@@ -32,8 +30,7 @@ function getCurrentDate() {
   return `${d.getFullYear()}-${month}-${day}`;
 }
 
-// TODO: order posts by date
-
+// TODO: this should recursively iterate over parent dir and collect all index.md[x] files
 function getAllPostsData() {
   return fs
     .readdirSync(postsDir)
@@ -98,6 +95,40 @@ function render(header, posts) {
   }
 }
 
-// render("Published Posts", getPublishedPosts());
-render("Pending Posts", getPendingPosts());
-// render("Unpublished Posts", getUnpublishedPosts());
+yargs.command(
+  "list [type]",
+  "list posts",
+  yargs => {
+    yargs.positional("type", {
+      describe: "one of: all, published, pending, unpublished",
+      default: "all"
+    });
+  },
+  argv => {
+    switch (argv.type) {
+      case "all": {
+        render("All Posts", getAllPostsData());
+        break;
+      }
+
+      case "published": {
+        render("Published Posts", getPublishedPosts());
+        break;
+      }
+
+      case "pending": {
+        render("Pending Posts", getPendingPosts());
+        break;
+      }
+
+      case "unpublished": {
+        render("Unpublished Posts", getUnpublishedPosts());
+        break;
+      }
+
+      default: {
+        console.log(chalk.red(`Error: unknown type '${argv.type}'`));
+      }
+    }
+  }
+).argv;
