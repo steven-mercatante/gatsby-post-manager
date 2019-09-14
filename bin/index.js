@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const chalk = require("chalk");
-const yargs = require("yargs");
+const program = require("commander");
 const frontmatter = require("front-matter");
 const Table = require("cli-table");
 
@@ -43,14 +43,11 @@ function getCurrentDate() {
 function getPostStatus(post) {
   if (post.published === true && new Date(post.date) <= getCurrentDate()) {
     return "published";
-    // return chalk.hex(colors.green)("published");
   }
   if (post.published === true && new Date(post.date) > getCurrentDate()) {
     return "pending";
-    // return chalk.hex(colors.blue)("pending");
   }
   return "unpublished";
-  // return chalk.hex(colors.orange)("unpublished");
 }
 
 // TODO: this should recursively iterate over parent dir and collect all index.md[x] files
@@ -123,42 +120,35 @@ function render(header, posts, opts = {}) {
   }
 }
 
-yargs.command(
-  "list [type]",
-  "list posts",
-  yargs => {
-    yargs.positional("type", {
-      describe: "one of: all, published, pending, unpublished",
-      default: "all"
-    });
-  },
-  argv => {
-    switch (argv.type) {
-      case "all": {
-        render("All Posts", getAllPostsData(), { showStatus: true });
-        break;
-      }
+program.option("-p, --posts [status]", "list posts").parse(process.argv);
 
-      case "published": {
-        render("Published Posts", getPublishedPosts());
-        break;
-      }
+if (program.posts) {
+  switch (program.posts) {
+    case true:
+    case "all": {
+      render("All Posts", getAllPostsData(), { showStatus: true });
+      break;
+    }
+    case "published": {
+      render("Published Posts", getPublishedPosts());
+      break;
+    }
 
-      case "pending": {
-        render("Pending Posts", getPendingPosts());
-        break;
-      }
+    case "pending": {
+      render("Pending Posts", getPendingPosts());
+      break;
+    }
 
-      case "unpublished": {
-        render("Unpublished Posts", getUnpublishedPosts());
-        break;
-      }
+    case "unpublished": {
+      render("Unpublished Posts", getUnpublishedPosts());
+      break;
+    }
 
-      default: {
-        console.log(
-          chalk.hex(colors.red)(`Error: unknown type '${argv.type}'`)
-        );
-      }
+    default: {
+      console.log(
+        chalk.hex(colors.red)(`Invalid value for status: '${program.posts}'`)
+      );
     }
   }
-).argv;
+}
+console.log(program.opts());
