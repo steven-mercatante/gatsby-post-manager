@@ -6,11 +6,11 @@ const chalk = require("chalk");
 const boxed = require("boxen");
 const yargs = require("yargs");
 const frontmatter = require("front-matter");
+const Table = require("cli-table");
 
 const options = yargs.usage("Usage: -n <name>").argv;
 
-console.log(chalk.green.bold("hi"));
-
+//! DON'T HARDCODE
 const postsDir = "/Users/steve/sites/stevemerc.com/content/posts";
 
 /**
@@ -39,7 +39,7 @@ function getAllPostsData() {
     .readdirSync(postsDir)
     .map(postDir => path.join(postsDir, postDir))
     .reduce((acc, postDir) => {
-      const post = path.join(postDir, "index.md");
+      const post = path.join(postDir, "index.md"); // TODO: should also support .mdx
       const postContents = fs.readFileSync(post, "utf8");
       const fm = frontmatter(postContents);
       acc.push(fm.attributes);
@@ -82,7 +82,22 @@ function getUnpublishedPosts() {
     .reverse();
 }
 
-// console.log(getAllPostsData());
-// console.log(getPublishedPosts());
-// console.log(getPendingPosts());
-// console.log(getUnpublishedPosts());
+function render(header, posts) {
+  console.log(chalk.green.bold(header));
+  const table = new Table({
+    head: ["#", "Date", "Title"]
+  });
+
+  if (posts.length > 0) {
+    posts.forEach((post, idx) => {
+      table.push([idx + 1, post.date, post.title]);
+    });
+    console.log(table.toString());
+  } else {
+    console.log(chalk.red("No results"));
+  }
+}
+
+// render("Published Posts", getPublishedPosts());
+render("Pending Posts", getPendingPosts());
+// render("Unpublished Posts", getUnpublishedPosts());
