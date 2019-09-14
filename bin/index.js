@@ -93,9 +93,10 @@ function getUnpublishedPosts() {
 }
 
 function render(header, posts, opts = {}) {
-  const { showStatus } = opts;
   console.log(chalk.hex(colors.green).bold(header));
+
   const tableHeader = ["#", "Date", "Title"];
+  const { showStatus } = opts;
   if (showStatus) {
     tableHeader.push("Status");
   }
@@ -123,8 +124,7 @@ program
   .option("-d, --dir <path>", "directory where posts live", ".")
   .option(
     "-p, --posts [status]",
-    'list posts with optional status (one of: "all", "published", "pending", "unpublished")',
-    "all"
+    'list posts with optional status (one of: "all", "published", "pending", "unpublished")'
   )
   .parse(process.argv);
 
@@ -149,6 +149,7 @@ try {
 
 if (program.posts) {
   switch (program.posts) {
+    case true:
     case "all": {
       render("All Posts", getAllPostsData(), { showStatus: true });
       break;
@@ -175,3 +176,4 @@ if (program.posts) {
     }
   }
 }
+console.log(program.opts());
