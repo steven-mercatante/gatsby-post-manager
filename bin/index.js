@@ -26,7 +26,17 @@ function getCurrentDate() {
     day = `0${day}`;
   }
 
-  return `${d.getFullYear()}-${month}-${day}`;
+  return new Date(`${d.getFullYear()}-${month}-${day}`);
+}
+
+function getPostStatus(post) {
+  if (post.published === true && new Date(post.date) <= getCurrentDate()) {
+    return chalk.green("published");
+  }
+  if (post.published === true && new Date(post.date) > getCurrentDate()) {
+    return chalk.blue("pending");
+  }
+  return chalk.hex("##f58142")("unpublished");
 }
 
 // TODO: this should recursively iterate over parent dir and collect all index.md[x] files
@@ -54,20 +64,14 @@ function getAllPostsData() {
 
 function getPublishedPosts() {
   return getAllPostsData().filter(post => {
-    return (
-      post.published === true &&
-      new Date(post.date) <= new Date(getCurrentDate())
-    );
+    return post.published === true && new Date(post.date) <= getCurrentDate();
   });
 }
 
 function getPendingPosts() {
   return getAllPostsData()
     .filter(post => {
-      return (
-        post.published === true &&
-        new Date(post.date) > new Date(getCurrentDate())
-      );
+      return post.published === true && new Date(post.date) > getCurrentDate();
     })
     .reverse();
 }
@@ -78,15 +82,23 @@ function getUnpublishedPosts() {
     .reverse();
 }
 
-function render(header, posts) {
+function render(header, posts, showStatus = false) {
   console.log(chalk.green.bold(header));
+  const tableHeader = ["#", "Date", "Title"];
+  if (showStatus) {
+    tableHeader.push("Status");
+  }
   const table = new Table({
-    head: ["#", "Date", "Title"]
+    head: tableHeader
   });
 
   if (posts.length > 0) {
     posts.forEach((post, idx) => {
-      table.push([idx + 1, post.date, post.title]);
+      const row = [idx + 1, post.date, post.title];
+      if (showStatus) {
+        row.push(getPostStatus(post));
+      }
+      table.push(row);
     });
     console.log(table.toString());
   } else {
@@ -106,7 +118,7 @@ yargs.command(
   argv => {
     switch (argv.type) {
       case "all": {
-        render("All Posts", getAllPostsData());
+        render("All Posts", getAllPostsData(), true);
         break;
       }
 
