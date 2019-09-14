@@ -96,7 +96,7 @@ function getUnpublishedPosts() {
     .reverse();
 }
 
-function render(header, posts, postType, opts = {}) {
+function render(header, posts, opts = {}) {
   const { showStatus } = opts;
   console.log(chalk.hex(colors.green).bold(header));
   const tableHeader = ["#", "Date", "Title"];
@@ -135,22 +135,22 @@ yargs.command(
   argv => {
     switch (argv.type) {
       case "all": {
-        render("All Posts", getAllPostsData(), "all", { showStatus: true });
+        render("All Posts", getAllPostsData(), { showStatus: true });
         break;
       }
 
       case "published": {
-        render("Published Posts", getPublishedPosts(), "published");
+        render("Published Posts", getPublishedPosts());
         break;
       }
 
       case "pending": {
-        render("Pending Posts", getPendingPosts(), "pending");
+        render("Pending Posts", getPendingPosts());
         break;
       }
 
       case "unpublished": {
-        render("Unpublished Posts", getUnpublishedPosts(), "unpublished");
+        render("Unpublished Posts", getUnpublishedPosts());
         break;
       }
 
