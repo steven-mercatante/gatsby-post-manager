@@ -1,6 +1,6 @@
 # Gatsby Post Manager
 
-Gatsby Post Manager (`gpm`) is a command line tool that was designed to help keep track of Gatsby posts and easily see which of them are published, pending, or published.
+Gatsby Post Manager (`gpm`) is a command line tool that was designed to help keep track of Gatsby posts and easily see which of them are published, pending, or unpublished.
 
 ## Installation
 
