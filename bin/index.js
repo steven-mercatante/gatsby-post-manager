@@ -159,6 +159,17 @@ function getPostsDir(dir = ".") {
   } else {
     postsDir = path.join(process.cwd(), dir);
   }
+
+  try {
+    const postsDirStats = fs.statSync(postsDir);
+    if (!postsDirStats.isDirectory()) {
+      throw "not a dir";
+    }
+  } catch (err) {
+    console.log(chalk.hex(colors.red)(`Error: invalid directory ${postsDir}`));
+    process.exit();
+  }
+
   return postsDir;
 }
 
@@ -196,6 +207,7 @@ yargs
           console.log(
             chalk.hex(colors.red)(`Invalid value for status: '${argv.status}'`)
           );
+          process.exit();
         }
       }
     }
