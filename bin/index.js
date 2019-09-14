@@ -120,12 +120,45 @@ function render(header, posts, opts = {}) {
   }
 }
 
+function publishedStr(str) {
+  return chalk.hex(postTypeColors.published)(str);
+}
+function pendingStr(str) {
+  return chalk.hex(postTypeColors.pending)(str);
+}
+function unpublishedStr(str) {
+  return chalk.hex(postTypeColors.unpublished)(str);
+}
+
+function getStats(posts) {
+  const stats = posts.reduce(
+    (acc, post) => {
+      const postStatus = getPostStatus(post);
+      acc[postStatus] += 1;
+      return acc;
+    },
+    { published: 0, pending: 0, unpublished: 0 }
+  );
+  const table = new Table({
+    head: ["Post Status", "# Posts"]
+  });
+
+  table.push([publishedStr("Published"), publishedStr(stats.published)]);
+  table.push([pendingStr("Pending"), pendingStr(stats.pending)]);
+  table.push([
+    unpublishedStr("Unpublished"),
+    unpublishedStr(stats.unpublished)
+  ]);
+  console.log(table.toString());
+}
+
 program
   .option("-d, --dir <path>", "directory where posts live", ".")
   .option(
     "-p, --posts [status]",
     'list posts with optional status (one of: "all", "published", "pending", "unpublished")'
   )
+  .option("-ps, --post-stats", "display stats for all posts")
   .parse(process.argv);
 
 const { dir } = program.opts();
@@ -176,4 +209,9 @@ if (program.posts) {
     }
   }
 }
+
+if (program.postStats) {
+  getStats(getAllPostsData());
+}
+
 console.log(program.opts());
