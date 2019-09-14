@@ -52,10 +52,12 @@ function getAllPostsData(postsDir) {
     .readdirSync(postsDir)
     .map(postDir => path.join(postsDir, postDir))
     .reduce((acc, postDir) => {
-      const post = path.join(postDir, "index.md"); // TODO: should also support .mdx
-      const postContents = fs.readFileSync(post, "utf8");
-      const fm = frontmatter(postContents);
-      acc.push(fm.attributes);
+      try {
+        const post = path.join(postDir, "index.md"); // TODO: should also support .mdx
+        const postContents = fs.readFileSync(post, "utf8");
+        const fm = frontmatter(postContents);
+        acc.push(fm.attributes);
+      } catch (err) {}
       return acc;
     }, [])
     .sort((a, b) => {
