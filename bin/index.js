@@ -3,7 +3,6 @@
 const fs = require("fs");
 const path = require("path");
 const chalk = require("chalk");
-const boxed = require("boxen");
 const yargs = require("yargs");
 const frontmatter = require("front-matter");
 const Table = require("cli-table");
