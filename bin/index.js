@@ -13,6 +13,7 @@ const colors = {
   orange: "#E57A40",
   red: "#FF5370"
 };
+
 const postTypeColors = {
   published: colors.green,
   pending: colors.blue,
@@ -123,8 +124,24 @@ program
   .option("-p, --posts  [status]", "list posts with optional status", "all")
   .parse(process.argv);
 
-// TODO: handle case where postsDir isn't a dir
-const postsDir = path.join(process.cwd(), program.opts().dir);
+const { dir } = program.opts();
+let postsDir;
+if (path.isAbsolute(dir)) {
+  postsDir = dir;
+} else {
+  postsDir = path.join(process.cwd(), program.opts().dir);
+}
+
+try {
+  const postsDirStats = fs.statSync(postsDir);
+  if (!postsDirStats.isDirectory(postsDir)) {
+    throw "not a dir";
+  }
+} catch (err) {
+  return console.log(
+    chalk.hex(colors.red)(`Error: invalid directory ${postsDir}`)
+  );
+}
 
 if (program.posts) {
   switch (program.posts) {
@@ -154,4 +171,3 @@ if (program.posts) {
     }
   }
 }
-console.log(program.opts());
