@@ -1,29 +1,11 @@
 const {
   getAllPostsData,
-  getCurrentDate,
   getPostsDir,
+  getPublishedPosts,
+  getPendingPosts,
+  getUnpublishedPosts,
   render
 } = require("../utils");
-
-function getPublishedPosts(postsDir) {
-  return getAllPostsData(postsDir).filter(post => {
-    return post.published === true && new Date(post.date) <= getCurrentDate();
-  });
-}
-
-function getPendingPosts(postsDir) {
-  return getAllPostsData(postsDir)
-    .filter(post => {
-      return post.published === true && new Date(post.date) > getCurrentDate();
-    })
-    .reverse();
-}
-
-function getUnpublishedPosts(postsDir) {
-  return getAllPostsData(postsDir)
-    .filter(post => post.published !== true)
-    .reverse();
-}
 
 module.exports = {
   command: "posts [status]",
@@ -39,17 +21,21 @@ module.exports = {
         break;
       }
       case "published": {
-        render(getPublishedPosts(postsDir));
+        const posts = getAllPostsData(postsDir);
+        render(getPublishedPosts(posts));
         break;
       }
 
       case "pending": {
-        render(getPendingPosts(postsDir));
+        const posts = getAllPostsData(postsDir);
+        console.log(posts);
+        render(getPendingPosts(posts));
         break;
       }
 
       case "unpublished": {
-        render(getUnpublishedPosts(postsDir));
+        const posts = getAllPostsData(postsDir);
+        render(getUnpublishedPosts(posts));
         break;
       }
 
