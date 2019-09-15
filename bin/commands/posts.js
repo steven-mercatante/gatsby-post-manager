@@ -6,6 +6,7 @@ const {
   getUnpublishedPosts,
   render
 } = require("../utils");
+const chalk = require("chalk");
 
 module.exports = {
   command: "posts [status]",
