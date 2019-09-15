@@ -18,12 +18,24 @@ Please note that `gpm` is opinionated. It assumes that your posts:
 
 `gpm` will recursively search the provided content path (the `--dir` option) for posts.
 
+Below is my example directory structure. All `gpm` commands are invoked from the `site` root.
+
+```
+site/
+├── content/
+│   ├── posts/
+│   |   ├── my-first-post/
+│   |   |   └── index.md
+│   |   ├── my-second-post/
+│   |   |   └── index.mdx
+```
+
 ### List all posts, including their status:
 
 ```bash
-$ gpm -d path/to/posts posts
+$ gpm -d content/ posts
 # or
-$ gpm -d path/to/posts p
+$ gpm -d content/ p
 ```
 
 ![gpm-all-posts](/images/gpm-all-posts.png)
@@ -31,9 +43,9 @@ $ gpm -d path/to/posts p
 ### List posts whose `status` is one of: `published`, `pending`, or `unpublished`
 
 ```bash
-$ gpm -d path/to/posts posts [status]
+$ gpm -d content/ posts [status]
 # or
-$ gpm -d path/to/posts p [status]
+$ gpm -d content/ p [status]
 ```
 
 ![gpm-pending-posts](/images/gpm-pending-posts.png)
@@ -41,9 +53,9 @@ $ gpm -d path/to/posts p [status]
 ### Display post stats:
 
 ```bash
-$ gpm -d path/to/posts post-starts
+$ gpm -d content/ post-starts
 # or
-$ gpm -d path/to/posts ps
+$ gpm -d content/ ps
 ```
 
 ![gpm-all-posts](/images/gpm-post-stats.png)
