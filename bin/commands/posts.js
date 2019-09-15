@@ -28,7 +28,6 @@ module.exports = {
 
       case "pending": {
         const posts = getAllPostsData(postsDir);
-        console.log(posts);
         render(getPendingPosts(posts));
         break;
       }
