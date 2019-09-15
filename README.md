@@ -53,7 +53,7 @@ $ gpm -d content/ p [status]
 ### Display post stats:
 
 ```bash
-$ gpm -d content/ post-starts
+$ gpm -d content/ post-stats
 # or
 $ gpm -d content/ ps
 ```
