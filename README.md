@@ -1,6 +1,6 @@
 # Gatsby Post Manager
 
-![npm badge](https://img.shields.io/npm/v/gatsby-post-manager)
+[![npm badge](https://img.shields.io/npm/v/gatsby-post-manager)](https://www.npmjs.com/package/gatsby-post-manager)
 
 Gatsby Post Manager (`gpm`) is a command line tool that helps keep track of Gatsby posts, and easily see which ones are published, pending, or unpublished.
 
