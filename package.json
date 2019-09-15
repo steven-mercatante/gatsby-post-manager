@@ -9,7 +9,11 @@
   "bin": {
     "gpm": "./bin/index.js"
   },
-  "keywords": [],
+  "keywords": [
+    "gatsby",
+    "gatsbyjs",
+    "react"
+  ],
   "author": "Steven Mercatante",
   "license": "MIT",
   "dependencies": {
