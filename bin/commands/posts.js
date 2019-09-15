@@ -1,4 +1,5 @@
 const {
+  colors,
   getAllPostsData,
   getPostsDir,
   getPublishedPosts,

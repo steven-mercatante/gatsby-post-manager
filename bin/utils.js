@@ -149,6 +149,7 @@ function getPostsDir(dir = ".") {
 }
 
 module.exports = {
+  colors,
   getAllPostsData,
   getCurrentDate,
   getPostsDir,
