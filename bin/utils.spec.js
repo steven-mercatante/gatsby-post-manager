@@ -1,7 +1,8 @@
 const {
   getPublishedPosts,
   getPendingPosts,
-  getUnpublishedPosts
+  getUnpublishedPosts,
+  getPostStatus
 } = require("./utils");
 
 const publishedPost1 = {
@@ -43,4 +44,10 @@ test("getUnpublishedPosts returns unpublished posts", () => {
   const unpublishedPosts = getUnpublishedPosts(posts);
   const expected = [unpublishedPost1];
   expect(unpublishedPosts).toEqual(expected);
+});
+
+test("getPostStatus returns the correct status", () => {
+  expect(getPostStatus(publishedPost1)).toEqual("published");
+  expect(getPostStatus(pendingPost1)).toEqual("pending");
+  expect(getPostStatus(unpublishedPost1)).toEqual("unpublished");
 });

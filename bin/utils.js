@@ -118,12 +118,15 @@ function render(posts, opts = {}) {
 function publishedStr(str) {
   return chalk.hex(postTypeColors.published)(str);
 }
+
 function pendingStr(str) {
   return chalk.hex(postTypeColors.pending)(str);
 }
+
 function unpublishedStr(str) {
   return chalk.hex(postTypeColors.unpublished)(str);
 }
+
 function getPostsDir(dir = ".") {
   let postsDir;
   if (path.isAbsolute(dir)) {
