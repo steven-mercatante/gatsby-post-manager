@@ -10,7 +10,7 @@ $ npm install -g gatsby-post-manager
 
 ## Usage
 
-Please note that `gpm` is opinionated. It assumes that your posts:
+`gpm` is opinionated - it assumes your posts:
 
 - are named either `index.md` or `index.mdx`
 - have a `published` boolean flag in their frontmatter
