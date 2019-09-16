@@ -49,7 +49,7 @@ function getPostStatus(post) {
 
 function getAllPostsData(postsDir) {
   return glob
-    .sync(`${postsDir}/**/*.{md,mdx}`)
+    .sync(`${postsDir}/**/*.{md,mdx}`, { ignore: "**/node_modules/**" })
     .reduce((acc, file) => {
       try {
         const postContents = fs.readFileSync(file, "utf8");
