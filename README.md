@@ -15,7 +15,7 @@ $ npm install -g gatsby-post-manager
 
 `gpm` is opinionated - it assumes your posts:
 
-- are named either `index.md` or `index.mdx`
+- use the `.md` or `.mdx` file extensions
 - have a `published` boolean flag in their frontmatter
 - have a `date` attribute (format: `YYYY-MM-DD`) in their frontmatter
 
