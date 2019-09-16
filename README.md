@@ -31,6 +31,7 @@ site/
 │   |   |   └── index.md
 │   |   ├── my-second-post/
 │   |   |   └── index.mdx
+│   |   └── my-third-post.md
 ```
 
 ### List all posts, including their status:
