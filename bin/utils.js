@@ -19,10 +19,16 @@ const postTypeColors = {
   unpublished: colors.orange
 };
 
+const statuses = {
+  published: "published",
+  pending: "pending",
+  unpublished: "unpublished"
+};
+
 /**
  * Returns the current date in YYYY-MM-DD format
  */
-function getCurrentDate() {
+function getCurrentDate(convertToDate = true) {
   const d = new Date();
 
   let month = (d.getMonth() + 1).toString();
@@ -35,17 +41,37 @@ function getCurrentDate() {
     day = `0${day}`;
   }
 
-  return new Date(`${d.getFullYear()}-${month}-${day}`);
+  const strDate = `${d.getFullYear()}-${month}-${day}`;
+
+  if (convertToDate) {
+    return new Date(strDate);
+  } else {
+    return strDate;
+  }
 }
 
 function getPostStatus(post) {
-  if (post.published === true && new Date(post.date) <= getCurrentDate()) {
-    return "published";
+  if (
+    post.date &&
+    new Date(post.date) <= getCurrentDate() &&
+    post.published === true
+  ) {
+    return statuses.published;
   }
-  if (post.published === true && new Date(post.date) > getCurrentDate()) {
-    return "pending";
+
+  if (
+    post.date &&
+    new Date(post.date) > getCurrentDate() &&
+    post.published === true
+  ) {
+    return statuses.pending;
   }
-  return "unpublished";
+
+  if (post.published === true) {
+    return statuses.published;
+  }
+
+  return statuses.unpublished;
 }
 
 function getAllPostsData(postsDir) {
@@ -78,20 +104,18 @@ function getAllPostsData(postsDir) {
 
 function getPublishedPosts(posts) {
   return posts.filter(post => {
-    return post.published === true && new Date(post.date) <= getCurrentDate();
+    return getPostStatus(post) === statuses.published;
   });
 }
 
 function getPendingPosts(posts) {
-  return posts
-    .filter(post => {
-      return post.published === true && new Date(post.date) > getCurrentDate();
-    })
-    .reverse();
+  return posts.filter(post => {
+    return getPostStatus(post) === statuses.pending;
+  });
 }
 
 function getUnpublishedPosts(posts) {
-  return posts.filter(post => post.published !== true).reverse();
+  return posts.filter(post => getPostStatus(post) === statuses.unpublished);
 }
 
 function render(posts, opts = {}) {
@@ -155,6 +179,14 @@ function getPostsDir(dir = ".") {
   return postsDir;
 }
 
+function successMsg(msg) {
+  console.log(chalk.hex(colors.green)(msg));
+}
+
+function errorMsg(msg) {
+  console.log(chalk.hex(colors.red)(msg));
+}
+
 module.exports = {
   colors,
   getAllPostsData,
@@ -167,5 +199,8 @@ module.exports = {
   publishedStr,
   pendingStr,
   unpublishedStr,
-  render
+  render,
+  successMsg,
+  errorMsg,
+  statuses
 };

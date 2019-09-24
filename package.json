@@ -1,6 +1,6 @@
 {
   "name": "gatsby-post-manager",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "",
   "main": "bin/index.js",
   "scripts": {
@@ -17,11 +17,13 @@
   "author": "Steven Mercatante",
   "license": "MIT",
   "dependencies": {
+    "@sindresorhus/slugify": "^0.9.1",
     "chalk": "^2.4.2",
     "cli-table": "^0.3.1",
     "front-matter": "^3.0.2",
     "glob": "^7.1.4",
     "lodash.sortby": "^4.7.0",
+    "titleize": "^2.1.0",
     "yargs": "^14.0.0"
   },
   "devDependencies": {

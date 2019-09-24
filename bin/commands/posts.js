@@ -1,5 +1,4 @@
 const {
-  colors,
   getAllPostsData,
   getPostsDir,
   getPublishedPosts,
@@ -7,45 +6,45 @@ const {
   getUnpublishedPosts,
   render
 } = require("../utils");
-const chalk = require("chalk");
 
 module.exports = {
-  command: "posts [status]",
+  command: "posts",
   aliases: ["p"],
-  desc:
-    'list posts with optional status (one of: "all", "published", "pending", "unpublished")',
-  builder: yargs => yargs.default("status", "all"),
+  desc: "list posts",
+  builder: yargs => {
+    return yargs.commandDir("posts_commands").options({
+      p: {
+        alias: "published",
+        boolean: true,
+        default: false
+      },
+      e: {
+        alias: "pending",
+        boolean: true,
+        default: false
+      },
+      u: {
+        alias: "unpublished",
+        boolean: true,
+        default: false
+      }
+    });
+  },
   handler: argv => {
+    const { published, pending, unpublished } = argv;
     const postsDir = getPostsDir(argv.dir);
-    switch (argv.status) {
-      case "all": {
-        render(getAllPostsData(postsDir), { showStatus: true });
-        break;
-      }
-      case "published": {
-        const posts = getAllPostsData(postsDir);
-        render(getPublishedPosts(posts));
-        break;
-      }
 
-      case "pending": {
-        const posts = getAllPostsData(postsDir);
-        render(getPendingPosts(posts));
-        break;
-      }
-
-      case "unpublished": {
-        const posts = getAllPostsData(postsDir);
-        render(getUnpublishedPosts(posts));
-        break;
-      }
-
-      default: {
-        console.log(
-          chalk.hex(colors.red)(`Invalid value for status: '${argv.status}'`)
-        );
-        process.exit();
-      }
+    if (!published && !pending && !unpublished) {
+      render(getAllPostsData(postsDir), { showStatus: true });
+    } else if (published) {
+      const posts = getAllPostsData(postsDir);
+      render(getPublishedPosts(posts));
+    } else if (pending) {
+      const posts = getAllPostsData(postsDir);
+      render(getPendingPosts(posts));
+    } else if (unpublished) {
+      const posts = getAllPostsData(postsDir);
+      render(getUnpublishedPosts(posts));
     }
   }
 };
