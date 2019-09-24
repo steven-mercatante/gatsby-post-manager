@@ -4,6 +4,7 @@ const chalk = require("chalk");
 const frontmatter = require("front-matter");
 const Table = require("cli-table");
 const glob = require("glob");
+const sortBy = require("lodash.sortby");
 
 const colors = {
   blue: "#82AAFF",
@@ -48,25 +49,31 @@ function getPostStatus(post) {
 }
 
 function getAllPostsData(postsDir) {
-  return glob
+  const postsGroupedByStatus = glob
     .sync(`${postsDir}/**/*.{md,mdx}`, { ignore: "**/node_modules/**" })
     .reduce((acc, file) => {
       try {
         const postContents = fs.readFileSync(file, "utf8");
         const fm = frontmatter(postContents);
-        acc.push(fm.attributes);
+        const status = getPostStatus(fm.attributes);
+        if (!acc[status]) {
+          acc[status] = [];
+        }
+        acc[status].push(fm.attributes);
       } catch (err) {}
       return acc;
-    }, [])
-    .sort((a, b) => {
-      if (new Date(a.date) > new Date(b.date)) {
-        return -1;
-      }
-      if (new Date(a.date) < new Date(b.date)) {
-        return 1;
-      }
-      return 0;
-    });
+    }, {});
+
+  const sortedPosts = Object.values(postsGroupedByStatus).reduce(
+    (acc, posts) => {
+      const sorted = sortBy(posts, ["date", "title"]);
+      acc.push(...sorted);
+      return acc;
+    },
+    []
+  );
+
+  return sortedPosts;
 }
 
 function getPublishedPosts(posts) {
