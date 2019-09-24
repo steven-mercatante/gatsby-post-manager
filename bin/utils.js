@@ -22,7 +22,7 @@ const postTypeColors = {
 /**
  * Returns the current date in YYYY-MM-DD format
  */
-function getCurrentDate() {
+function getCurrentDate(convertToDate = true) {
   const d = new Date();
 
   let month = (d.getMonth() + 1).toString();
@@ -35,7 +35,13 @@ function getCurrentDate() {
     day = `0${day}`;
   }
 
-  return new Date(`${d.getFullYear()}-${month}-${day}`);
+  const strDate = `${d.getFullYear()}-${month}-${day}`;
+
+  if (convertToDate) {
+    return new Date(strDate);
+  } else {
+    return strDate;
+  }
 }
 
 function getPostStatus(post) {
