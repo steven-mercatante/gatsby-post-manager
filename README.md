@@ -37,9 +37,9 @@ site/
 ### List all posts, including their status:
 
 ```bash
-$ gpm -d content/ posts
+$ gpm -d content posts
 # or
-$ gpm -d content/ p
+$ gpm -d content p
 ```
 
 ![gpm-all-posts](/images/gpm-all-posts.png)
@@ -47,9 +47,10 @@ $ gpm -d content/ p
 ### List posts whose `status` is one of: `published`, `pending`, or `unpublished`
 
 ```bash
-$ gpm -d content/ posts [status]
+# status flags: --published, --pending, --unpublished
+$ gpm -d content posts --pending
 # or
-$ gpm -d content/ p [status]
+$ gpm -d content p --pending
 ```
 
 ![gpm-pending-posts](/images/gpm-pending-posts.png)
@@ -57,9 +58,9 @@ $ gpm -d content/ p [status]
 ### Display post stats:
 
 ```bash
-$ gpm -d content/ post-stats
+$ gpm -d content post-stats
 # or
-$ gpm -d content/ ps
+$ gpm -d content ps
 ```
 
 ![gpm-all-posts](/images/gpm-post-stats.png)
