@@ -161,6 +161,14 @@ function getPostsDir(dir = ".") {
   return postsDir;
 }
 
+function successMsg(msg) {
+  console.log(chalk.hex(colors.green)(msg));
+}
+
+function errorMsg(msg) {
+  console.log(chalk.hex(colors.red)(msg));
+}
+
 module.exports = {
   colors,
   getAllPostsData,
@@ -173,5 +181,7 @@ module.exports = {
   publishedStr,
   pendingStr,
   unpublishedStr,
-  render
+  render,
+  successMsg,
+  errorMsg
 };

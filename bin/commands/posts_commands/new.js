@@ -1,9 +1,8 @@
 const fs = require("fs");
 const path = require("path");
-const chalk = require("chalk");
 const titleize = require("titleize");
 const slugify = require("@sindresorhus/slugify");
-const { getCurrentDate, colors } = require("../../utils");
+const { getCurrentDate, successMsg, errorMsg } = require("../../utils");
 
 module.exports = {
   command: "new <dir> <title>",
@@ -26,9 +25,9 @@ Add your content here
 
     try {
       fs.writeFileSync(filepath, frontmatter, { flag: "wx" });
-      console.log(chalk.hex(colors.green)(`${filepath} successfully created`));
+      successMsg(`${filepath} successfully created`);
     } catch (err) {
-      console.log(chalk.hex(colors.red)(`${filepath} already exists`));
+      errorMsg(`${filepath} already exists`);
     }
   }
 };
