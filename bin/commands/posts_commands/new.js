@@ -1,8 +1,9 @@
 const fs = require("fs");
 const path = require("path");
+const chalk = require("chalk");
 const titleize = require("titleize");
 const slugify = require("@sindresorhus/slugify");
-const { getCurrentDate } = require("../../utils");
+const { getCurrentDate, colors } = require("../../utils");
 
 module.exports = {
   command: "new <dir> <title>",
@@ -23,7 +24,11 @@ date: '${getCurrentDate(false)}'
 Add your content here
 `;
 
-    // TODO: warn if file exists, or exit?
-    fs.writeFileSync(filepath, frontmatter);
+    try {
+      fs.writeFileSync(filepath, frontmatter, { flag: "wx" });
+      console.log(chalk.hex(colors.green)(`${filepath} successfully created`));
+    } catch (err) {
+      console.log(chalk.hex(colors.red)(`${filepath} already exists`));
+    }
   }
 };
