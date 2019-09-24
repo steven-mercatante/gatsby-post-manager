@@ -21,6 +21,7 @@
     "cli-table": "^0.3.1",
     "front-matter": "^3.0.2",
     "glob": "^7.1.4",
+    "lodash.sortby": "^4.7.0",
     "yargs": "^14.0.0"
   },
   "devDependencies": {
