@@ -66,9 +66,8 @@ function getAllPostsData(postsDir) {
 
   const sortedPosts = Object.values(postsGroupedByStatus).reduce(
     (acc, posts) => {
-      // const postsSortedByDate = sortBy(posts, post => post.date);
-      const postsSortedByDate = sortBy(posts, ["date", "title"]);
-      acc.push(...postsSortedByDate);
+      const sorted = sortBy(posts, ["date", "title"]);
+      acc.push(...sorted);
       return acc;
     },
     []
