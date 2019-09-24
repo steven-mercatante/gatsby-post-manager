@@ -3,7 +3,10 @@
 [![npm badge](https://img.shields.io/npm/v/gatsby-post-manager)](https://www.npmjs.com/package/gatsby-post-manager)
 [![travis badge](https://img.shields.io/travis/steven-mercatante/gatsby-post-manager)](https://travis-ci.org/steven-mercatante/gatsby-post-manager)
 
-Gatsby Post Manager (`gpm`) is a command line tool that helps keep track of Gatsby posts, and easily see which ones are published, pending, or unpublished.
+Gatsby Post Manager (`gpm`) is a command line tool that:
+
+- helps keep track of Gatsby posts, and easily see which ones are published, pending, or unpublished
+- create new posts from a template
 
 ## Installation
 
@@ -18,12 +21,6 @@ $ npm install -g gatsby-post-manager
 - use the `.md` or `.mdx` file extensions
 - have a required `published` boolean flag in their frontmatter
 - have an optional `date` attribute (format: `YYYY-MM-DD`) in their frontmatter
-
-### How does gpm determine post status?
-
-- A post's status is `published` if its `published` attribute is `true`, and its `date` attribute is less than or equal to today's date (if the post has a `date` attribute)
-- A post's status is `pending` if its `published` attribute is `true`, and its `date` attribute is greater than today's date (if the post has a `date` attribute)
-- A post's status is `unpublished` if its `published` attribute is not `true`, or doesn't have a `published` attribute at all
 
 `gpm` will recursively search the provided content path (the `--dir` option) for posts.
 
@@ -61,6 +58,12 @@ $ gpm -d content p --pending
 
 ![gpm-pending-posts](/images/gpm-pending-posts.png)
 
+### How does gpm determine post status?
+
+- A post's status is `published` if its `published` attribute is `true`, and its `date` attribute is less than or equal to today's date (if the post has a `date` attribute)
+- A post's status is `pending` if its `published` attribute is `true`, and its `date` attribute is greater than today's date (if the post has a `date` attribute)
+- A post's status is `unpublished` if its `published` attribute is not `true`, or doesn't have a `published` attribute at all
+
 ### Display post stats:
 
 ```bash
@@ -70,3 +73,22 @@ $ gpm -d content ps
 ```
 
 ![gpm-all-posts](/images/gpm-post-stats.png)
+
+### Create a post:
+
+```
+$ gpm posts new path/to/posts "hello world"
+```
+
+will create a new `path/to/posts/hello-world.md` file whose frontmatter looks like:
+
+```yaml
+---
+title: Hello World
+slug: "hello-world"
+tags: []
+published: false
+date: "2019-09-23"
+---
+Add your content here
+```
