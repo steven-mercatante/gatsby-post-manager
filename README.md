@@ -16,8 +16,14 @@ $ npm install -g gatsby-post-manager
 `gpm` is opinionated - it assumes your posts:
 
 - use the `.md` or `.mdx` file extensions
-- have a `published` boolean flag in their frontmatter
-- have a `date` attribute (format: `YYYY-MM-DD`) in their frontmatter
+- have a required `published` boolean flag in their frontmatter
+- have an optional `date` attribute (format: `YYYY-MM-DD`) in their frontmatter
+
+### How does gpm determine post status?
+
+- A post's status is `published` if its `published` attribute is `true`, and its `date` attribute is less than or equal to today's date (if the post has a `date` attribute)
+- A post's status is `pending` if its `published` attribute is `true`, and its `date` attribute is greater than today's date (if the post has a `date` attribute)
+- A post's status is `unpublished` if its `published` attribute is not `true`, or doesn't have a `published` attribute at all
 
 `gpm` will recursively search the provided content path (the `--dir` option) for posts.
 
