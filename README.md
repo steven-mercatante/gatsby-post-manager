@@ -60,8 +60,9 @@ $ gpm -d content p --pending
 
 ### How does gpm determine post status?
 
-- A post's status is `published` if its `published` attribute is `true`, and its `date` attribute is less than or equal to today's date (if the post has a `date` attribute)
-- A post's status is `pending` if its `published` attribute is `true`, and its `date` attribute is greater than today's date (if the post has a `date` attribute)
+- A post's status is `published` if its `published` attribute is `true`, and its `date` attribute occurs before or is equal to today's date (if the post has a `date` attribute)
+- A post's status is `pending` if its `published` attribute is `true`, and its `date` attribute occurs after today's date (if the post has a `date` attribute)
+- A post's status is `published` if its `published` attribute is `true`, and it does not have a `date` attribute
 - A post's status is `unpublished` if its `published` attribute is not `true`, or doesn't have a `published` attribute at all
 
 ### Display post stats:
